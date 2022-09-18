@@ -1,0 +1,25 @@
+FROM java:8
+
+VOLUME /tmp
+
+ENV DATABASE_HOST=host.docker.internal
+ENV DATABASE_PORT=27017
+ENV DATABASE_NAME=gateway
+ENV DATABASE_USERNAME=admin
+ENV DATABASE_PASSWORD=admin
+ENV DATABASE_AUTH=backend
+
+# ENV RABBITMQ_HOST=host.docker.internal
+# ENV RABBITMQ_PORT=5672
+# ENV RABBITMQ_USER=guest
+# ENV RABBITMQ_PASS=guest
+
+
+WORKDIR micro-service
+COPY ./module/gateway-service.jar ./module/gateway-service.jar
+COPY ./service/gateway-service/config/application.properties ./service/gateway-service/config/application.properties
+COPY ./service/gateway-service/config/logback-spring.xml ./service/gateway-service/config/logback-spring.xml
+ENV ARGS_OPTS=""
+
+EXPOSE 8083
+ENTRYPOINT java -jar $ARGS_OPTS -Dspring.config.location=file:./service/gateway-service/config/application.properties -Dlogback.configurationFile=./service/gateway-service/config/logback-spring.xml module/gateway-service.jar --logging.config=./service/gateway-service/config/logback-spring.xml

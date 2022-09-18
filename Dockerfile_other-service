@@ -1,0 +1,25 @@
+FROM java:8
+
+VOLUME /tmp
+
+ENV DATABASE_HOST=host.docker.internal
+ENV DATABASE_PORT=27017
+ENV DATABASE_NAME=other
+ENV DATABASE_USERNAME=admin
+ENV DATABASE_PASSWORD=admin
+ENV DATABASE_AUTH=backend
+
+# ENV RABBITMQ_HOST=host.docker.internal
+# ENV RABBITMQ_PORT=5672
+# ENV RABBITMQ_USER=guest
+# ENV RABBITMQ_PASS=guest
+
+
+WORKDIR micro-service
+COPY ./module/other-service.jar ./module/other-service.jar
+COPY ./service/other-service/config/application.properties ./service/other-service/config/application.properties
+COPY ./service/other-service/config/logback-spring.xml ./service/other-service/config/logback-spring.xml
+ENV ARGS_OPTS=""
+
+EXPOSE 8888
+ENTRYPOINT java -jar $ARGS_OPTS -Dspring.config.location=file:./service/other-service/config/application.properties -Dlogback.configurationFile=./service/other-service/config/logback-spring.xml module/other-service.jar --logging.config=./service/other-service/config/logback-spring.xml
