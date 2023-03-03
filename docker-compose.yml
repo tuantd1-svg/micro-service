@@ -22,6 +22,7 @@ services:
       - ./service/gateway-service/config:/micro-service/service/gateway-service/config/
     environment:
       - TZ=Asia/Ho_Chi_Minh
+      - SPRING_PROFILES_ACTIVE=uat
   gateway-service_1:
     image: gateway-service_1
     build:
@@ -44,6 +45,8 @@ services:
       - ./service/gateway-service/config:/micro-service/service/gateway-service/config/
     environment:
       - TZ=Asia/Ho_Chi_Minh
+      - SPRING_PROFILES_ACTIVE=uat
+
   gateway-service_2:
     image: gateway-service_2
     build:
@@ -65,7 +68,8 @@ services:
     volumes:
       - ./service/gateway-service/config:/micro-service/service/gateway-service/config/
     environment:
-      - TZ=Asia/Ho_Chi_Minh            
+      - TZ=Asia/Ho_Chi_Minh  
+      - SPRING_PROFILES_ACTIVE=uat      
   authen-service:
     image: authen-service
     build: 
@@ -87,7 +91,8 @@ services:
     volumes:
       - ./service/authen-service/config:/micro-service/service/authen-service/config/  
     environment:
-      - TZ=Asia/Ho_Chi_Minh                       
+      - TZ=Asia/Ho_Chi_Minh   
+      - SPRING_PROFILES_ACTIVE=uat      
   other-service:
     image: other-service
     build: 
