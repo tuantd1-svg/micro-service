@@ -18,8 +18,12 @@ ENV DATABASE_AUTH=backend
 WORKDIR micro-service
 COPY ./module/authentication-service.jar ./module/authentication-service.jar
 COPY ./service/authen-service/config/application.properties ./service/authen-service/config/application.properties
+COPY ./service/authen-service/config/application-dev.properties ./service/authen-service/config/application-dev.properties
+COPY ./service/authen-service/config/application-uat.properties ./service/authen-service/config/application-uat.properties
+
+
 COPY ./service/authen-service/config/logback-spring.xml ./service/authen-service/config/logback-spring.xml
 ENV ARGS_OPTS=""
 
 EXPOSE 9999
-ENTRYPOINT java -jar $ARGS_OPTS -Dspring.config.location=file:./service/authen-service/config/application.properties -Dlogback.configurationFile=./service/authen-service/config/logback-spring.xml module/authentication-service.jar --logging.config=./service/authen-service/config/logback-spring.xml
+ENTRYPOINT java -jar $ARGS_OPTS -Dspring.config.location=file:./service/authen-service/config/application.properties, file:./service/authen-service/config/application-dev.properties , file:./service/authen-service/config/application-uat.properties -Dlogback.configurationFile=./service/authen-service/config/logback-spring.xml module/authentication-service.jar --logging.config=./service/authen-service/config/logback-spring.xml
