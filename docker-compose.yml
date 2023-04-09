@@ -11,51 +11,7 @@ services:
       - "8083:8083"
     networks: 
       customnetwork: 
-        ipv4_address: 172.20.0.10  
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: 50m
-        max-file: "10"
-        compress: "true"
-    volumes:
-      - ./service/gateway-service/config:/micro-service/service/gateway-service/config/
-    environment:
-      - TZ=Asia/Ho_Chi_Minh
-  gateway-service_1:
-    image: gateway-service_1
-    build:
-      context: .
-      dockerfile: Dockerfile_gateway-service
-    container_name: gateway-service_1
-    hostname: gateway-service
-    ports:
-      - "8085:8083"
-    networks: 
-      customnetwork: 
-        ipv4_address: 172.20.0.13  
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: 50m
-        max-file: "10"
-        compress: "true"
-    volumes:
-      - ./service/gateway-service/config:/micro-service/service/gateway-service/config/
-    environment:
-      - TZ=Asia/Ho_Chi_Minh
-  gateway-service_2:
-    image: gateway-service_2
-    build:
-      context: .
-      dockerfile: Dockerfile_gateway-service
-    container_name: gateway-service_2
-    hostname: gateway-service
-    ports:
-      - "8086:8083"
-    networks: 
-      customnetwork: 
-        ipv4_address: 172.20.0.14  
+        ipv4_address: 172.40.0.10  
     restart: unless-stopped
     logging:
       options:
@@ -66,64 +22,25 @@ services:
       - ./service/gateway-service/config:/micro-service/service/gateway-service/config/
     environment:
       - TZ=Asia/Ho_Chi_Minh            
-  authen-service:
-    image: authen-service
-    build: 
-      context: .
-      dockerfile: Dockerfile_authen-service
-    container_name: authen-service
-    hostname: authen-service
-    ports:
-      - "9999:9999"
-    networks: 
-      customnetwork: 
-        ipv4_address: 172.20.0.11      
-    restart: unless-stopped
-    logging:
-      options :  
-        max-size: 50m
-        max-file: "10"
-        compress: "true"  
+  collector:
+    image: otel/opentelemetry-collector:0.72.0
+    command: [ "--config=/etc/otel-collector-config.yml" ]
     volumes:
-      - ./service/authen-service/config:/micro-service/service/authen-service/config/  
-    environment:
-      - TZ=Asia/Ho_Chi_Minh                       
-  other-service:
-    image: other-service
-    build: 
-      context: .
-      dockerfile: Dockerfile_other-service
-    container_name: other-service
-    hostname: other-service
+      - ./otel-config/otel-config.yml:/etc/otel-collector-config.yml
     ports:
-      - "8888:8888"
-    networks: 
-      customnetwork: 
-        ipv4_address: 172.20.0.12        
-    restart: unless-stopped
-    logging:
-      options :  
-        max-size: 50m
-        max-file: "10"
-        compress: "true"  
-    volumes:
-      - ./service/other-service/config:/micro-service/service/other-service/config/  
-    environment:
-      - TZ=Asia/Ho_Chi_Minh
-  ngin-x:
-    image: ngin-x
-    build:
-      context: .
-      dockerfile: Dockerfile_nginx
-    container_name: ngin-x
+      - "4317:4317"
+    depends_on:
+      - jaeger-service
+
+  jaeger-service:
+    image: jaegertracing/all-in-one:latest
     ports:
-      - "80:80"
-    networks: 
-      customnetwork: 
-        ipv4_address: 172.20.0.20                                         
+      - "16686:16686"
+      - "14250"      
 networks:
-  customnetwork: 
+  core_netword: 
     ipam:
       config: 
-        - subnet: 172.20.0.0/16
+        - subnet: 172.40.0.0/16
       
+        
